@@ -1,181 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Pulse by Info-Tech Academy — Vote</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f4f6f9;
-    --surface: #ffffff;
-    --border: rgba(31,57,102,0.15);
-    --accent: #1f3966;
-    --accent2: #1f3966;
-    --accent3: #f6b719;
-    --text: #1a2a3a;
-    --muted: rgba(31,57,102,0.5);
-    --radius: 16px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'Nunito Sans', sans-serif;
-    min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-    padding: 24px 16px 48px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pulse by ITA — Vote</title>
 
-  .top-bar { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; width: 100%; }
-  .logo { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; }
+  <style>
+    body{
+      font-family:Arial,sans-serif;
+      background:#f4f6f9;
+      padding:20px;
+      text-align:center;
+    }
 
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 28px 22px; width: 100%; max-width: 480px;
-  }
+    .card{
+      background:white;
+      padding:24px;
+      border-radius:16px;
+      max-width:500px;
+      margin:auto;
+      box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    }
 
-  /* ── Waiting state ── */
-  #waiting-state { text-align: center; padding: 20px 0; }
-  .pulse-ring {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 3px solid var(--accent); margin: 0 auto 24px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.12); opacity: 0.6; }
-  }
-  #waiting-state h2 { font-size: 20px; margin-bottom: 8px; }
-  #waiting-state p { color: var(--muted); font-size: 14px; }
+    h1{
+      color:#1f3966;
+    }
 
-  /* ── Poll state ── */
-  #poll-state { display: none; }
-  .question-text { font-size: 20px; font-weight: 700; line-height: 1.4; margin-bottom: 24px; }
-  .type-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    button{
+      width:100%;
+      padding:16px;
+      margin-top:10px;
+      border:none;
+      border-radius:10px;
+      background:#1f3966;
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+    }
 
-  /* MC options */
-  .mc-option {
-    width: 100%; padding: 16px 20px; background: transparent;
-    border: 2px solid var(--border); border-radius: 12px;
-    color: var(--text); font-family: 'Nunito Sans', sans-serif;
-    font-size: 16px; font-weight: 500; cursor: pointer;
-    margin-bottom: 10px; text-align: left; transition: all 0.2s;
-    display: block;
-  }
-  .mc-option:hover { border-color: var(--accent); background: rgba(31,57,102,0.06); }
-  .mc-option.selected { border-color: var(--accent); background: rgba(31,57,102,0.12); }
-  .mc-option:disabled { opacity: 0.5; cursor: not-allowed; }
+    textarea{
+      width:100%;
+      padding:14px;
+      border-radius:10px;
+      margin-top:12px;
+    }
 
-  /* Text input (WC + QA) */
-  .text-input-wrap textarea {
-    width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.04);
-    border: 2px solid var(--border); border-radius: 12px; color: var(--text);
-    font-family: 'Nunito Sans', sans-serif; font-size: 16px;
-    resize: none; outline: none; transition: border-color 0.2s;
-  }
-  .text-input-wrap textarea:focus { border-color: var(--accent); }
-  .char-count { text-align: right; font-size: 12px; color: var(--muted); margin-top: 6px; }
-
-  /* Rating emojis */
-  .emoji-grid { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .emoji-btn {
-    flex: 1; min-width: 60px; max-width: 80px;
-    padding: 14px 8px; border-radius: 14px; border: 2px solid var(--border);
-    background: transparent; cursor: pointer; text-align: center;
-    transition: all 0.2s; font-family: 'Nunito Sans', sans-serif;
-  }
-  .emoji-btn .em { font-size: 32px; display: block; }
-  .emoji-btn .em-label { font-size: 11px; color: var(--muted); margin-top: 6px; display: block; }
-  .emoji-btn:hover { border-color: var(--accent); background: rgba(31,57,102,0.08); transform: scale(1.05); }
-  .emoji-btn.selected { border-color: var(--accent3); background: rgba(246,183,25,0.14); transform: scale(1.08); }
-  .emoji-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .btn-submit {
-    width: 100%; margin-top: 20px; padding: 16px;
-    background: var(--accent); border: none; border-radius: 12px;
-    color: #fff; font-family: 'Nunito Sans', sans-serif;
-    font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-  }
-  .btn-submit:hover { opacity: 0.88; }
-  .btn-submit:active { transform: scale(0.97); }
-  .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-
-  /* ── Submitted state ── */
-  #done-state { display: none; text-align: center; padding: 16px 0; }
-  .done-circle {
-    width: 72px; height: 72px; border-radius: 50%;
-    background: rgba(31,57,102,0.1); border: 2px solid var(--accent2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; margin: 0 auto 20px;
-  }
-  #done-state h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  #done-state p { color: var(--muted); font-size: 14px; }
-
-  .footer { margin-top: 32px; font-size: 12px; color: rgba(240,240,248,0.2); text-align: center; }
-</style>
+    #status{
+      margin-top:20px;
+      color:#666;
+    }
+  </style>
 </head>
-<body>
 
-<div class="top-bar"><div class="logo">Pulse <span style="opacity:.5;font-weight:400;letter-spacing:0;">by</span> Info-Tech Academy</div></div>
+<body>
 
 <div class="card">
 
-  <!-- WAITING -->
-  <div id="waiting-state">
-    <div class="pulse-ring"></div>
-    <h2>Waiting for question…</h2>
-    <p>Your presenter will launch a question shortly. Keep this page open.</p>
+  <h1>Pulse by ITA</h1>
+
+  <div id="waiting">
+    Waiting for presenter...
   </div>
 
-  <!-- ACTIVE POLL -->
-  <div id="poll-state">
-    <div class="type-label" id="type-label">Multiple choice</div>
-    <div class="question-text" id="q-text">—</div>
+  <div id="poll" style="display:none;">
 
-    <!-- MC -->
-    <div id="mc-ui"></div>
+    <h2 id="question"></h2>
 
-    <!-- WC -->
-    <div id="wc-ui" style="display:none">
-      <div class="text-input-wrap">
-        <textarea id="wc-input" maxlength="60" rows="2" placeholder="Type one or two words…" oninput="updateCharCount('wc-input','wc-cc',60)"></textarea>
-        <div class="char-count"><span id="wc-cc">0</span>/60</div>
-      </div>
-    </div>
+    <div id="answers"></div>
 
-    <!-- QA -->
-    <div id="qa-ui" style="display:none">
-      <div class="text-input-wrap">
-        <textarea id="qa-input" maxlength="280" rows="4" placeholder="Type your question or comment…" oninput="updateCharCount('qa-input','qa-cc',280)"></textarea>
-        <div class="char-count"><span id="qa-cc">0</span>/280</div>
-      </div>
-    </div>
+    <textarea id="textAnswer" style="display:none;"></textarea>
 
-    <!-- Rating -->
-    <div id="rating-ui" style="display:none">
-      <div class="emoji-grid" id="emoji-grid"></div>
-    </div>
+    <button id="submitBtn" style="display:none;">
+      Submit
+    </button>
 
-    <button class="btn-submit" id="submit-btn" onclick="submitAnswer()">Send answer</button>
-  </div>
-
-  <!-- DONE -->
-  <div id="done-state">
-    <div class="done-circle">✓</div>
-    <h2>Answer received!</h2>
-    <p>Wait for the next question from your presenter.</p>
   </div>
 
 </div>
 
-<div class="footer">Pulse by Info-Tech Academy · powered by GitHub Pages</div>
-
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, push, onValue }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  // ── PASTE THE SAME FIREBASE CONFIG AS IN index.html ──
-const firebaseConfig = {
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  onValue,
+  push
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
     apiKey: "AIzaSyCRHuQpYrdmOeHRue-NiokiUvL9gcsmtt4",
     authDomain: "pulsebyita.firebaseapp.com",
     databaseURL: "https://pulsebyita-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -185,89 +101,117 @@ const firebaseConfig = {
     appId: "1:949933946697:web:8ce1c627c384e2e6464c98",
     measurementId: "G-QRX9GNP9S8"
   };
-  const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
 
-  const EMOJIS = ['😞','😐','🙂','😄','🤩'];
-  const LABELS = ['Bad','Okay','Good','Great','Amazing'];
+const app = initializeApp(firebaseConfig);
 
-  let currentPoll   = null;
-  let selectedAnswer = null;
-  let submittedFor  = null;
+const db = getDatabase(app);
 
-  // Watch the active poll
-  onValue(ref(db, 'activePoll'), snap => {
-    const poll = snap.val();
-    if (!poll) {
-      showState('waiting');
-      currentPoll    = null;
-      selectedAnswer = null;
-    } else if (poll.launchedAt !== currentPoll?.launchedAt) {
-      currentPoll    = poll;
-      selectedAnswer = null;
-      submittedFor   = null;
-      renderPoll(poll);
-      showState('poll');
-    }
-  });
+const waiting = document.getElementById("waiting");
+const pollDiv = document.getElementById("poll");
+const question = document.getElementById("question");
+const answers = document.getElementById("answers");
+const textAnswer = document.getElementById("textAnswer");
+const submitBtn = document.getElementById("submitBtn");
 
-  function renderPoll(poll) {
-    document.getElementById('q-text').textContent = poll.question;
-    const types = { mc:'Multiple choice', wc:'Word cloud', qa:'Open Q&A', rating:'Rate it' };
-    document.getElementById('type-label').textContent = types[poll.type] || '';
+let currentPoll = null;
 
-    ['mc','wc','qa','rating'].forEach(t =>
-      document.getElementById(t+'-ui').style.display = t === poll.type ? '' : 'none');
+onValue(ref(db, "activePoll"), (snapshot) => {
 
-    if (poll.type === 'mc') {
-      document.getElementById('mc-ui').innerHTML = (poll.options||[]).map(o =>
-        `<button class="mc-option" onclick="selectMc(this,'${o.replace(/'/g,"\\'")}')"> ${o}</button>`).join('');
-    }
-    if (poll.type === 'rating') {
-      document.getElementById('emoji-grid').innerHTML = EMOJIS.map((e,i) =>
-        `<button class="emoji-btn" onclick="selectEmoji(this,'${e}')">
-           <span class="em">${e}</span><span class="em-label">${LABELS[i]}</span>
-         </button>`).join('');
-    }
-    document.getElementById('submit-btn').disabled = poll.type === 'mc' || poll.type === 'rating';
+  const poll = snapshot.val();
+
+  if(!poll){
+
+    waiting.style.display = "block";
+    pollDiv.style.display = "none";
+
+    return;
   }
 
-  window.selectMc = (btn, val) => {
-    document.querySelectorAll('.mc-option').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedAnswer = val;
-    document.getElementById('submit-btn').disabled = false;
-  };
-  window.selectEmoji = (btn, val) => {
-    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedAnswer = val;
-    document.getElementById('submit-btn').disabled = false;
-  };
+  currentPoll = poll;
 
-  window.updateCharCount = (inputId, ccId, max) => {
-    const len = document.getElementById(inputId).value.length;
-    document.getElementById(ccId).textContent = len;
-    document.getElementById('submit-btn').disabled = len === 0;
-  };
+  waiting.style.display = "none";
+  pollDiv.style.display = "block";
 
-  window.submitAnswer = async () => {
-    if (!currentPoll) return;
-    let answer = selectedAnswer;
-    if (currentPoll.type === 'wc') answer = document.getElementById('wc-input').value.trim();
-    if (currentPoll.type === 'qa') answer = document.getElementById('qa-input').value.trim();
-    if (!answer) return;
+  question.innerText = poll.question;
 
-    document.getElementById('submit-btn').disabled = true;
-    await push(ref(db, 'responses'), { answer, ts: Date.now() });
-    showState('done');
-  };
+  answers.innerHTML = "";
 
-  function showState(state) {
-    document.getElementById('waiting-state').style.display = state==='waiting' ? '' : 'none';
-    document.getElementById('poll-state').style.display    = state==='poll'    ? '' : 'none';
-    document.getElementById('done-state').style.display    = state==='done'    ? '' : 'none';
+  textAnswer.style.display = "none";
+  submitBtn.style.display = "none";
+
+  if(poll.type === "mc"){
+
+    poll.options.forEach(option => {
+
+      const btn = document.createElement("button");
+
+      btn.innerText = option;
+
+      btn.onclick = async () => {
+
+        await push(ref(db, "responses"), {
+          answer: option,
+          ts: Date.now()
+        });
+
+        alert("Answer submitted");
+
+      };
+
+      answers.appendChild(btn);
+
+    });
+
   }
+
+  else if(poll.type === "wc" || poll.type === "qa"){
+
+    textAnswer.style.display = "block";
+    submitBtn.style.display = "block";
+
+    submitBtn.onclick = async () => {
+
+      await push(ref(db, "responses"), {
+        answer: textAnswer.value,
+        ts: Date.now()
+      });
+
+      alert("Submitted");
+
+      textAnswer.value = "";
+
+    };
+
+  }
+
+  else if(poll.type === "rating"){
+
+    ["😞","😐","🙂","😄","🤩"].forEach(em => {
+
+      const btn = document.createElement("button");
+
+      btn.innerText = em;
+
+      btn.onclick = async () => {
+
+        await push(ref(db, "responses"), {
+          answer: em,
+          ts: Date.now()
+        });
+
+        alert("Rating submitted");
+
+      };
+
+      answers.appendChild(btn);
+
+    });
+
+  }
+
+});
+
 </script>
+
 </body>
 </html>
