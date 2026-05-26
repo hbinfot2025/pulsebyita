@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulse by Info-Tech Academy — Presenter</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f6f9;--surface:#ffffff;--surface2:#eaeaea;
+    --border:rgba(31,57,102,0.15);
+    --accent:#1f3966;--accent2:#e05c2a;--accent3:#1f3966;--accent4:#f6b719;
+    --text:#1a2a3a;--muted:rgba(31,57,102,0.5);--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Nunito Sans',sans-serif;min-height:100vh;}
+
+  /* LOGIN */
+  #login-screen{
+    display:flex;align-items:center;justify-content:center;min-height:100vh;
+    background:radial-gradient(ellipse at 30% 40%,rgba(31,57,102,0.08) 0%,transparent 60%),
+               radial-gradient(ellipse at 70% 70%,rgba(246,183,25,0.08) 0%,transparent 55%),var(--bg);
+  }
+  .login-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;padding:44px 36px;width:100%;max-width:420px;text-align:center;
+  }
+  .login-card .logo{font-size:13px;font-weight:600;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;margin-bottom:24px;}
+  .login-card h1{font-size:24px;font-weight:700;margin-bottom:6px;}
+  .login-card p{color:var(--muted);font-size:14px;margin-bottom:28px;}
+  .login-card input{
+    width:100%;padding:13px 18px;background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:15px;
+    outline:none;margin-bottom:12px;transition:border-color .2s;
+  }
+  .login-card input:focus{border-color:var(--accent);}
+  .login-card input.error{border-color:var(--accent2);animation:shake .3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* collaborator list */
+  .collab-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;}
+  .collab-btn{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 16px;background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;cursor:pointer;transition:all .2s;text-align:left;
+    font-family:'Nunito Sans',sans-serif;color:var(--text);width:100%;
+  }
+  .collab-btn:hover{border-color:var(--accent);background:rgba(31,57,102,.06);}
+  .collab-btn.selected{border-color:var(--accent);background:rgba(31,57,102,.12);}
+  .collab-avatar{
+    width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;flex-shrink:0;
+  }
+  .collab-name{font-size:15px;font-weight:600;}
+  .collab-role{font-size:12px;color:var(--muted);}
+
+  .btn-primary{
+    width:100%;padding:14px;background:var(--accent);border:none;border-radius:10px;
+    color:#fff;font-family:'Nunito Sans',sans-serif;font-size:16px;font-weight:600;
+    cursor:pointer;transition:opacity .2s,transform .1s;
+  }
+  .btn-primary:hover{opacity:.9;}
+  .btn-primary:active{transform:scale(.98);}
+  #login-error{color:var(--accent2);font-size:13px;margin-top:10px;min-height:18px;}
+  #pw-step{display:none;}
+  .back-link{color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;display:inline-block;}
+  .back-link:hover{color:var(--text);}
+
+  /* APP */
+  #app{display:none;}
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 28px;border-bottom:1px solid var(--border);
+    background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(31,57,102,0.12);
+    position:sticky;top:0;z-index:100;
+  }
+  header .brand{font-size:15px;font-weight:700;letter-spacing:.05em;}
+  header .brand span{color:var(--accent);}
+  .presenter-tag{
+    display:flex;align-items:center;gap:10px;
+  }
+  .presenter-avatar{
+    width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:700;
+  }
+  .presenter-name{font-size:14px;font-weight:600;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .session-pill{
+    background:var(--surface2);border:1px solid var(--border);
+    border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--accent3);
+  }
+  .btn-sm{
+    padding:7px 14px;border-radius:8px;border:1px solid var(--border);
+    background:var(--surface2);color:var(--muted);font-size:13px;font-weight:500;
+    cursor:pointer;font-family:'Nunito Sans',sans-serif;transition:all .2s;
+  }
+  .btn-sm:hover{border-color:var(--accent);color:var(--text);}
+  .btn-danger{border-color:rgba(255,101,132,.3);color:var(--accent2);}
+  .btn-danger:hover{background:rgba(255,101,132,.1);border-color:var(--accent2);}
+
+  main{max-width:900px;margin:0 auto;padding:28px 20px 80px;}
+  .section-title{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+
+  /* SHARE BANNER */
+  .share-banner{
+    background:linear-gradient(135deg,rgba(31,57,102,.08),rgba(246,183,25,.10));
+    border:1px solid rgba(31,57,102,.25);border-radius:var(--radius);
+    padding:18px 22px;margin-bottom:26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  }
+  .share-banner .url{font-family:'Nunito Sans',sans-serif;font-size:13px;color:var(--accent3);}
+  .btn-copy{
+    padding:7px 16px;border-radius:8px;border:1px solid var(--accent3);
+    background:rgba(246,183,25,.12);color:var(--accent3);font-size:13px;font-weight:600;
+    cursor:pointer;font-family:'Nunito Sans',sans-serif;transition:all .2s;
+  }
+  .btn-copy:hover{background:rgba(246,183,25,.22);}
+
+  /* CREATE */
+  .create-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:28px;}
+  .create-card h2{font-size:17px;font-weight:700;margin-bottom:18px;}
+  .type-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .type-tab{
+    padding:7px 14px;border-radius:8px;border:1px solid var(--border);
+    background:transparent;color:var(--muted);font-size:13px;font-weight:500;
+    cursor:pointer;font-family:'Nunito Sans',sans-serif;transition:all .2s;
+  }
+  .type-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px;}
+  .form-group input,.form-group textarea{
+    width:100%;padding:11px 15px;background:var(--surface2);
+    border:1px solid var(--border);border-radius:10px;color:var(--text);
+    font-family:'Nunito Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;
+  }
+  .form-group input:focus,.form-group textarea:focus{border-color:var(--accent);}
+  .form-group textarea{resize:vertical;min-height:76px;}
+  #mc-options{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+  .mc-option-row{display:flex;gap:8px;}
+  .mc-option-row input{flex:1;}
+  .mc-option-row button{
+    padding:0 13px;background:var(--surface2);border:1px solid var(--border);
+    border-radius:8px;color:var(--muted);font-size:18px;cursor:pointer;transition:all .2s;
+  }
+  .mc-option-row button:hover{border-color:var(--accent2);color:var(--accent2);}
+  .btn-add-opt{
+    background:none;border:1px dashed var(--border);border-radius:8px;
+    color:var(--muted);font-size:13px;padding:7px 14px;cursor:pointer;
+    font-family:'Nunito Sans',sans-serif;width:100%;transition:all .2s;
+  }
+  .btn-add-opt:hover{border-color:var(--accent);color:var(--accent);}
+  .emoji-preview{display:flex;gap:10px;font-size:26px;margin-top:8px;}
+  .launch-row{display:flex;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .btn-launch{
+    padding:11px 26px;background:var(--accent);border:none;border-radius:10px;
+    color:#fff;font-family:'Nunito Sans',sans-serif;font-size:15px;font-weight:600;
+    cursor:pointer;transition:all .2s;
+  }
+  .btn-launch:hover{opacity:.88;}
+  .active-badge{
+    padding:5px 13px;border-radius:8px;font-size:13px;font-weight:600;
+    background:rgba(246,183,25,.15);color:var(--accent3);border:1px solid rgba(246,183,25,.35);display:none;
+  }
+  .active-badge.on{display:inline-block;}
+
+  /* RESULTS */
+  .results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;}
+  .results-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
+  .results-header h2{font-size:18px;font-weight:700;flex:1;}
+  .results-meta{text-align:right;}
+  .response-count{font-size:13px;color:var(--muted);}
+  .response-count span{color:var(--accent4);font-weight:700;font-size:18px;}
+  .poll-owner-badge{
+    display:inline-block;margin-top:6px;
+    padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;
+  }
+
+  /* MC bars */
+  .bar-item{margin-bottom:14px;}
+  .bar-label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px;}
+  .bar-label .pct{color:var(--muted);font-family:'Nunito Sans',sans-serif;}
+  .bar-track{height:10px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .5s ease;}
+
+  /* Word cloud */
+  #wc-display{display:flex;flex-wrap:wrap;gap:10px;min-height:70px;align-items:center;}
+  .wc-word{padding:5px 13px;border-radius:99px;font-weight:600;transition:all .4s;}
+
+  /* Q&A */
+  #qa-list{display:flex;flex-direction:column;gap:10px;max-height:380px;overflow-y:auto;}
+  .qa-item{
+    background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;padding:13px 17px;font-size:14px;line-height:1.5;
+    animation:slideIn .3s ease;
+  }
+  @keyframes slideIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+  .qa-time{font-size:11px;color:var(--muted);margin-top:5px;font-family:'Nunito Sans',sans-serif;}
+
+  /* Rating */
+  .emoji-tally{display:flex;gap:14px;flex-wrap:wrap;}
+  .emoji-bucket{
+    background:var(--surface2);border:1px solid var(--border);
+    border-radius:12px;padding:14px 20px;text-align:center;min-width:84px;transition:border-color .3s;
+  }
+  .emoji-bucket .big-emoji{font-size:34px;}
+  .emoji-bucket .tally{font-size:22px;font-weight:700;margin-top:5px;}
+  .emoji-bucket .label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+  /* ACTIVITY FEED */
+  .activity-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-top:28px;}
+  .activity-card h3{font-size:14px;font-weight:700;margin-bottom:16px;}
+  #activity-feed{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;}
+  .activity-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+    font-size:13px;
+  }
+  .activity-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  .activity-text{flex:1;color:var(--muted);}
+  .activity-text strong{color:var(--text);}
+  .activity-time{font-size:11px;color:var(--muted);font-family:'Nunito Sans',sans-serif;}
+  #no-activity{color:var(--muted);font-size:13px;text-align:center;padding:20px 0;}
+
+  #no-poll-msg{color:var(--muted);font-size:15px;text-align:center;padding:36px 0;}
+  .hidden{display:none!important;}
+  .divider{border:none;border-top:1px solid var(--border);margin:26px 0;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo">Pulse <span style="opacity:.5;font-weight:400;">by</span> Info-Tech Academy</div>
+
+    <!-- Step 1: pick collaborator -->
+    <div id="pick-step">
+      <h1>Who are you?</h1>
+      <p>Select your name to continue</p>
+      <div class="collab-list" id="collab-list"></div>
+    </div>
+
+    <!-- Step 2: enter password -->
+    <div id="pw-step">
+      <span class="back-link" onclick="backToList()">← Back</span>
+      <h1>Enter password</h1>
+      <p id="pw-greeting" style="margin-bottom:20px;"></p>
+      <input type="password" id="pw-input" placeholder="Your password" autocomplete="current-password">
+      <button class="btn-primary" onclick="doLogin()">Enter Dashboard</button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="brand"><span>Pulse</span> by Info-Tech Academy</div>
+    <div class="header-right">
+      <div class="presenter-tag">
+        <div class="presenter-avatar" id="header-avatar"></div>
+        <span class="presenter-name" id="header-name"></span>
+      </div>
+      <div class="session-pill" id="session-url-short">—</div>
+      <button class="btn-sm" onclick="copyVoteUrl()">Copy student link</button>
+      <button class="btn-sm btn-danger" onclick="doLogout()">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="share-banner">
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Share this with students →</div>
+        <div class="url" id="vote-url-display">—</div>
+      </div>
+      <button class="btn-copy" onclick="copyVoteUrl()">Copy link</button>
+    </div>
+
+    <div class="section-title">Create a question</div>
+    <div class="create-card">
+      <div class="type-tabs">
+        <button class="type-tab active" onclick="setType('mc',this)">📊 Multiple choice</button>
+        <button class="type-tab" onclick="setType('wc',this)">☁️ Word cloud</button>
+        <button class="type-tab" onclick="setType('qa',this)">💬 Q&amp;A</button>
+        <button class="type-tab" onclick="setType('rating',this)">😊 Rating</button>
+      </div>
+      <div class="form-group">
+        <label>Your question</label>
+        <input type="text" id="q-text" placeholder="Type your question here…">
+      </div>
+      <div id="mc-section">
+        <div class="form-group">
+          <label>Answer options</label>
+          <div id="mc-options">
+            <div class="mc-option-row"><input type="text" value="Option A"><button onclick="removeOpt(this)">×</button></div>
+            <div class="mc-option-row"><input type="text" value="Option B"><button onclick="removeOpt(this)">×</button></div>
+          </div>
+          <button class="btn-add-opt" onclick="addOpt()">+ Add option</button>
+        </div>
+      </div>
+      <div id="wc-section" class="hidden"><p style="color:var(--muted);font-size:13px;">Students submit one or two words. Results appear as a word cloud.</p></div>
+      <div id="qa-section" class="hidden"><p style="color:var(--muted);font-size:13px;">Students type any question or comment. Answers appear live.</p></div>
+      <div id="rating-section" class="hidden">
+        <p style="color:var(--muted);font-size:13px;">Students choose one emoji to rate.</p>
+        <div class="emoji-preview">😞 😐 🙂 😄 🤩</div>
+      </div>
+      <div class="launch-row">
+        <button class="btn-launch" onclick="launchPoll()">🚀 Launch</button>
+        <span class="active-badge" id="active-badge">● LIVE</span>
+        <button class="btn-sm" onclick="clearPoll()" style="margin-left:auto;">Clear / stop</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section-title">Live results</div>
+    <div class="results-card">
+      <div id="no-poll-msg">No active question yet — launch one above ↑</div>
+      <div id="results-area" class="hidden">
+        <div class="results-header">
+          <h2 id="results-q">—</h2>
+          <div class="results-meta">
+            <div class="response-count"><span id="resp-count">0</span> responses</div>
+            <div class="poll-owner-badge" id="poll-owner-badge"></div>
+          </div>
+        </div>
+        <div id="mc-results"  class="hidden"><div id="mc-bars"></div></div>
+        <div id="wc-results"  class="hidden"><div id="wc-display"></div></div>
+        <div id="qa-results"  class="hidden"><div id="qa-list"></div></div>
+        <div id="rating-results" class="hidden"><div class="emoji-tally" id="emoji-tally"></div></div>
+      </div>
+    </div>
+
+    <!-- TEAM ACTIVITY FEED -->
+    <div class="activity-card">
+      <h3>Team activity</h3>
+      <div id="activity-feed">
+        <div id="no-activity">No polls launched yet today.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, push, onValue, remove }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ── PASTE YOUR FIREBASE CONFIG HERE ──
+const firebaseConfig = {
+  apiKey:            "PASTE_YOUR_apiKey_HERE",
+  authDomain:        "PASTE_YOUR_authDomain_HERE",
+  databaseURL:       "PASTE_YOUR_databaseURL_HERE",
+  projectId:         "PASTE_YOUR_projectId_HERE",
+  storageBucket:     "PASTE_YOUR_storageBucket_HERE",
+  messagingSenderId: "PASTE_YOUR_messagingSenderId_HERE",
+  appId:             "PASTE_YOUR_appId_HERE"
+};
+
+// ─────────────────────────────────────────────────────────────────
+// TEAM MEMBERS — add / remove / edit names, passwords, and colours
+// Each person gets their own name + password.
+// Colours: any CSS hex colour for their avatar bubble.
+// ─────────────────────────────────────────────────────────────────
+const COLLABORATORS = [
+  { name: "Alice Tan",    password: "alice2025",   color: "#1f3966" },
+  { name: "Ben Lim",      password: "ben2025",     color: "#f6b719" },
+  { name: "Clara Wong",   password: "clara2025",   color: "#2a5298" },
+  { name: "David Ng",     password: "david2025",   color: "#e8a000" },
+  { name: "Eva Chen",     password: "eva2025",     color: "#3d6b9e" },
+  // Add more lines here following the same format:
+  // { name: "Name Here", password: "password123", color: "#fcd44a" },
+];
+// ─────────────────────────────────────────────────────────────────
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+let currentType    = 'mc';
+let resultsListener = null;
+let currentUser    = null;
+
+// ── Build collaborator list ──
+const list = document.getElementById('collab-list');
+COLLABORATORS.forEach((c, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'collab-btn';
+  btn.innerHTML = `
+    <div class="collab-avatar" style="background:${c.color}22;color:${c.color};border:1.5px solid ${c.color}55">${initials(c.name)}</div>
+    <div><div class="collab-name">${c.name}</div><div class="collab-role">Presenter</div></div>`;
+  btn.onclick = () => pickCollaborator(i, btn);
+  list.appendChild(btn);
+});
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+let selectedIndex = null;
+window.pickCollaborator = (i, btn) => {
+  selectedIndex = i;
+  document.querySelectorAll('.collab-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('pick-step').style.display = 'none';
+  document.getElementById('pw-step').style.display   = 'block';
+  document.getElementById('pw-greeting').textContent  = `Welcome, ${COLLABORATORS[i].name.split(' ')[0]} 👋`;
+  document.getElementById('pw-input').value = '';
+  document.getElementById('login-error').textContent = '';
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+};
+
+window.backToList = () => {
+  document.getElementById('pick-step').style.display = 'block';
+  document.getElementById('pw-step').style.display   = 'none';
+};
+
+window.doLogin = () => {
+  if (selectedIndex === null) return;
+  const user = COLLABORATORS[selectedIndex];
+  const val  = document.getElementById('pw-input').value;
+  const inp  = document.getElementById('pw-input');
+  if (val === user.password) {
+    currentUser = user;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    setupHeader();
+    setupVoteUrl();
+    watchActivePoll();
+    watchActivity();
+  } else {
+    inp.classList.add('error');
+    document.getElementById('login-error').textContent = 'Wrong password. Try again.';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+};
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') window.doLogin(); });
+
+window.doLogout = () => {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('pick-step').style.display = 'block';
+  document.getElementById('pw-step').style.display   = 'none';
+  document.getElementById('pw-input').value = '';
+  currentUser = null;
+  selectedIndex = null;
+  document.querySelectorAll('.collab-btn').forEach(b => b.classList.remove('selected'));
+};
+
+function setupHeader() {
+  const av = document.getElementById('header-avatar');
+  av.textContent = initials(currentUser.name);
+  av.style.background = currentUser.color + '22';
+  av.style.color       = currentUser.color;
+  av.style.border      = `1.5px solid ${currentUser.color}55`;
+  document.getElementById('header-name').textContent = currentUser.name;
+}
+
+function setupVoteUrl() {
+  const base = location.href.replace('index.html','').replace(/\/?$/,'/');
+  const url  = base + 'vote.html';
+  document.getElementById('vote-url-display').textContent = url;
+  document.getElementById('session-url-short').textContent = url.replace('https://','').slice(0,38)+'…';
+  window._voteUrl = url;
+}
+window.copyVoteUrl = () => {
+  navigator.clipboard.writeText(window._voteUrl || '');
+  const btn = document.querySelector('.btn-copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy link', 1800);
+};
+
+// ── Type tabs ──
+window.setType = (type, el) => {
+  currentType = type;
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['mc','wc','qa','rating'].forEach(t =>
+    document.getElementById(t+'-section').classList.toggle('hidden', t !== type));
+};
+
+// ── MC options ──
+window.addOpt = () => {
+  const row = document.createElement('div');
+  row.className = 'mc-option-row';
+  row.innerHTML = '<input type="text" placeholder="New option"><button onclick="removeOpt(this)">×</button>';
+  document.getElementById('mc-options').appendChild(row);
+};
+window.removeOpt = btn => {
+  if (document.querySelectorAll('.mc-option-row').length > 2) btn.parentElement.remove();
+};
+
+// ── Launch ──
+window.launchPoll = async () => {
+  const q = document.getElementById('q-text').value.trim();
+  if (!q) { alert('Please enter a question first.'); return; }
+  let options = [];
+  if (currentType === 'mc') {
+    options = [...document.querySelectorAll('#mc-options input')].map(i => i.value.trim()).filter(Boolean);
+    if (options.length < 2) { alert('Add at least 2 options.'); return; }
+  }
+  await set(ref(db,'activePoll'), {
+    question: q, type: currentType, options,
+    launchedAt: Date.now(),
+    presenterName: currentUser.name,
+    presenterColor: currentUser.color
+  });
+  await remove(ref(db,'responses'));
+
+  // log to activity feed
+  await push(ref(db,'activity'), {
+    presenterName: currentUser.name,
+    presenterColor: currentUser.color,
+    question: q, type: currentType,
+    ts: Date.now()
+  });
+
+  document.getElementById('active-badge').classList.add('on');
+};
+
+window.clearPoll = async () => {
+  if (!confirm('Stop the current question and clear all responses?')) return;
+  await remove(ref(db,'activePoll'));
+  await remove(ref(db,'responses'));
+  document.getElementById('active-badge').classList.remove('on');
+  showNoResults();
+};
+
+// ── Watch active poll ──
+function watchActivePoll() {
+  onValue(ref(db,'activePoll'), snap => {
+    const poll = snap.val();
+    if (!poll) { showNoResults(); return; }
+    showResults(poll);
+  });
+}
+
+function showNoResults() {
+  document.getElementById('no-poll-msg').classList.remove('hidden');
+  document.getElementById('results-area').classList.add('hidden');
+  if (resultsListener) { resultsListener(); resultsListener = null; }
+}
+
+function showResults(poll) {
+  document.getElementById('no-poll-msg').classList.add('hidden');
+  document.getElementById('results-area').classList.remove('hidden');
+  document.getElementById('results-q').textContent = poll.question;
+
+  // Show who launched this poll
+  const badge = document.getElementById('poll-owner-badge');
+  badge.textContent = '● ' + (poll.presenterName || 'Unknown');
+  badge.style.background = (poll.presenterColor || '#6c63ff') + '22';
+  badge.style.color       = poll.presenterColor || '#1f3966';
+  badge.style.border      = `1px solid ${poll.presenterColor || '#6c63ff'}44`;
+
+  ['mc','wc','qa','rating'].forEach(t =>
+    document.getElementById(t+'-results').classList.toggle('hidden', t !== poll.type));
+
+  if (poll.type === 'mc')     renderMcShell(poll.options);
+  if (poll.type === 'rating') renderEmojiShell();
+
+  if (resultsListener) resultsListener();
+  resultsListener = onValue(ref(db,'responses'), snap => {
+    const all = Object.values(snap.val() || {});
+    document.getElementById('resp-count').textContent = all.length;
+    if (poll.type === 'mc')     updateMc(all, poll.options);
+    if (poll.type === 'wc')     updateWc(all);
+    if (poll.type === 'qa')     updateQa(all);
+    if (poll.type === 'rating') updateRating(all);
+  });
+}
+
+// ── MC ──
+function renderMcShell(options) {
+  document.getElementById('mc-bars').innerHTML = options.map((o,i) => `
+    <div class="bar-item">
+      <div class="bar-label"><span>${o}</span><span class="pct" id="pct-${i}">0%</span></div>
+      <div class="bar-track"><div class="bar-fill" id="bar-${i}" style="width:0%;background:${barColor(i)}"></div></div>
+    </div>`).join('');
+}
+function barColor(i) { return ['#1f3966','#f6b719','#2a5298','#e8a000','#3d6b9e','#fcd44a'][i%6]; }
+function updateMc(all, options) {
+  const counts = options.map(o => all.filter(r => r.answer === o).length);
+  const total  = counts.reduce((a,b)=>a+b,0) || 1;
+  options.forEach((_,i) => {
+    const pct = Math.round(counts[i]/total*100);
+    document.getElementById('bar-'+i).style.width = pct+'%';
+    document.getElementById('pct-'+i).textContent  = pct+'%';
+  });
+}
+
+// ── Word cloud ──
+function updateWc(all) {
+  const freq = {};
+  all.forEach(r => {
+    (r.answer||'').toLowerCase().split(/\s+/).forEach(w => {
+      w = w.replace(/[^a-z0-9]/gi,'');
+      if (w.length > 1) freq[w] = (freq[w]||0)+1;
+    });
+  });
+  const max = Math.max(...Object.values(freq), 1);
+  const pal = ['#1f3966','#f6b719','#2a5298','#e8a000','#3d6b9e','#fcd44a'];
+  document.getElementById('wc-display').innerHTML =
+    Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,40).map(([w,c],i) => {
+      const size  = 14 + Math.round((c/max)*28);
+      const color = pal[i%pal.length];
+      return `<span class="wc-word" style="font-size:${size}px;background:${color}22;color:${color};border:1px solid ${color}44">${w}</span>`;
+    }).join('');
+}
+
+// ── Q&A ──
+let shownQa = new Set();
+function updateQa(all) {
+  const list = document.getElementById('qa-list');
+  all.slice().reverse().forEach(r => {
+    if (!r.ts || shownQa.has(r.ts)) return;
+    shownQa.add(r.ts);
+    const d = document.createElement('div');
+    d.className = 'qa-item';
+    d.innerHTML = `${r.answer}<div class="qa-time">${new Date(r.ts).toLocaleTimeString()}</div>`;
+    list.prepend(d);
+  });
+}
+
+// ── Rating ──
+const EMOJIS = ['😞','😐','🙂','😄','🤩'];
+const LABELS = ['Bad','Okay','Good','Great','Amazing'];
+function renderEmojiShell() {
+  document.getElementById('emoji-tally').innerHTML = EMOJIS.map((e,i) => `
+    <div class="emoji-bucket">
+      <div class="big-emoji">${e}</div>
+      <div class="tally" id="emoji-cnt-${i}">0</div>
+      <div class="label">${LABELS[i]}</div>
+    </div>`).join('');
+}
+function updateRating(all) {
+  EMOJIS.forEach((e,i) => {
+    const el = document.getElementById('emoji-cnt-'+i);
+    if (el) el.textContent = all.filter(r => r.answer === e).length;
+  });
+}
+
+// ── Activity feed ──
+function watchActivity() {
+  onValue(ref(db,'activity'), snap => {
+    const data = snap.val();
+    const feed = document.getElementById('activity-feed');
+    if (!data) return;
+    const items = Object.values(data).sort((a,b) => b.ts - a.ts).slice(0,20);
+    document.getElementById('no-activity').style.display = items.length ? 'none' : '';
+    feed.innerHTML = '';
+    if (!items.length) { feed.appendChild(document.getElementById('no-activity')); return; }
+    items.forEach(item => {
+      const typeLabel = {mc:'Multiple choice',wc:'Word cloud',qa:'Q&A',rating:'Rating'}[item.type]||'';
+      const el = document.createElement('div');
+      el.className = 'activity-item';
+      el.innerHTML = `
+        <div class="activity-avatar" style="background:${item.presenterColor}22;color:${item.presenterColor}">${initials(item.presenterName)}</div>
+        <div class="activity-text"><strong>${item.presenterName}</strong> launched a ${typeLabel}: "${item.question.slice(0,50)}${item.question.length>50?'…':''}"</div>
+        <div class="activity-time">${new Date(item.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>`;
+      feed.appendChild(el);
+    });
+  });
+}
+</script>
+</body>
+</html>
